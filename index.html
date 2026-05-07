@@ -709,10 +709,177 @@
 
   .btn-view:hover { opacity: 0.85; transform: translateY(-2px); }
 
+  /* ── SIDEBAR ── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    z-index: 101;
+  }
+  .hamburger span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: var(--bright);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+  }
+  .sidebar-overlay.active { display: block; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0d1f42 0%, #0a1628 100%);
+    border-right: 1px solid var(--border);
+    z-index: 300;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-close {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .sidebar-close:hover { background: rgba(30,80,212,0.4); }
+
+  .sidebar-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+
+  .sidebar-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--royal), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    border: 2px solid var(--border);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  .sidebar-role {
+    font-size: 0.75rem;
+    color: var(--bright);
+    letter-spacing: 1px;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 0;
+    flex: 1;
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.25s;
+  }
+
+  .sidebar-nav a:hover {
+    color: var(--bright);
+    background: var(--glass);
+    border-left-color: var(--bright);
+    padding-left: 26px;
+  }
+
+  .sidebar-nav a:hover .sb-icon-wrap {
+    background: linear-gradient(135deg, var(--royal), var(--accent));
+    border-color: transparent;
+  }
+
+  .sb-icon-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: rgba(30,80,212,0.2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.25s;
+  }
+
+  .sidebar-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sidebar-contact-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     nav { padding: 16px 24px; }
     .nav-links { display: none; }
+    .hamburger { display: flex; }
     #hero { padding: 100px 24px 60px; }
     .hero-inner { flex-direction: column; gap: 40px; text-align: center; }
     .hero-bio { margin: 0 auto 36px; }
@@ -723,6 +890,77 @@
 </style>
 </head>
 <body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="nav-logo">M.Bilal</div>
+    <button class="sidebar-close" onclick="closeSidebar()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24" height="24">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="sidebar-profile">
+    <div class="sidebar-avatar">MB</div>
+    <div class="sidebar-name">M. Bilal Akbani</div>
+    <div class="sidebar-role">Full Stack Developer</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="#hero" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <span>Home</span>
+    </a>
+    <a href="#skills" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96a7.01 7.01 0 00-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.47.47 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.47.47 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.37 1.04.69 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 00-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+      </div>
+      <span>Skills</span>
+    </a>
+    <a href="#experience" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M20 6h-2.18c.07-.44.18-.86.18-1.3C18 2.55 15.45 1 13 1c-1.3 0-2.4.5-3.2 1.26L8 4H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+      </div>
+      <span>Experience</span>
+    </a>
+    <a href="#projects" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>
+      </div>
+      <span>Projects</span>
+    </a>
+    <a href="#education" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+      </div>
+      <span>Education</span>
+    </a>
+    <a href="#contact-section" onclick="closeSidebar()">
+      <div class="sb-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </div>
+      <span>Contact</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-contact-mini">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#5eb8ff" width="14" height="14"><path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C9.61 21 3 14.39 3 6a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.01l-2.2 2.21z"/></svg>
+      +92 333 0271653
+    </div>
+    <div class="sidebar-contact-mini">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#5eb8ff" width="14" height="14"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      bilalyaseen1128@gmail.com
+    </div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -735,6 +973,11 @@
     <a href="#education">Education</a>
     <a href="#contact-section">Contact</a>
   </div>
+  <button class="hamburger" id="hamburger" onclick="openSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -920,7 +1163,7 @@
       </div>
       <h3 class="project-title">Personal Portfolio Website</h3>
       <p class="project-desc">A responsive personal portfolio showcasing skills, projects and contact information with modern design.</p>
-      <a href="#" class="btn-view">
+      <a href="https://bilalyaseen1128.github.io/Bilal-portfolio/" target="_blank" class="btn-view">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         View Project
       </a>
@@ -935,7 +1178,7 @@
       </div>
       <h3 class="project-title">Student Management System</h3>
       <p class="project-desc">A full-stack web app to manage student records, attendance and grades using PHP and MySQL database.</p>
-      <a href="#" class="btn-view">
+      <a href="https://bilalyaseen1128.github.io/Bilal-portfolio/" target="_blank" class="btn-view">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         View Project
       </a>
@@ -950,7 +1193,7 @@
       </div>
       <h3 class="project-title">E-Commerce Website</h3>
       <p class="project-desc">An online store built with Laravel featuring product listings, cart functionality and order management.</p>
-      <a href="#" class="btn-view">
+      <a href="https://bilalyaseen1128.github.io/Bilal-portfolio/" target="_blank" class="btn-view">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         View Project
       </a>
@@ -965,7 +1208,7 @@
       </div>
       <h3 class="project-title">Business WordPress Site</h3>
       <p class="project-desc">A professional business website built on WordPress with custom theme, SEO optimization and digital marketing integration.</p>
-      <a href="#" class="btn-view">
+      <a href="https://bilalyaseen1128.github.io/Bilal-portfolio/" target="_blank" class="btn-view">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         View Project
       </a>
@@ -1054,5 +1297,21 @@
   <span>M. Bilal Akbani</span> &nbsp;·&nbsp; Full Stack Developer &nbsp;·&nbsp; Karachi, Pakistan
 </footer>
 
+<script>
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+// Close sidebar on ESC key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSidebar();
+});
+</script>
 </body>
 </html>
